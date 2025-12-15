@@ -4,6 +4,7 @@
 
 <img width="1434" height="578" alt="image" src="https://github.com/user-attachments/assets/8a1065d3-7908-4e0e-bbd2-d72b57819a54" />
 
+### Video: https://www.loom.com/share/f0f6eebbbb1f4ea190f8dc3fcd0d2f05
 ---
 
 ## 🎯 The Problem
