@@ -1,0 +1,21 @@
+{
+  "network": "testnet",
+  "deployedAt": "2025-11-10T10:17:58.421Z",
+  "walletAddress": "mn_shield-addr_test1m2dz469k68dngak48pg042lf2jak33gcz564drtnmag5pfy8anfsxqr5rsdcchfana420w22e2w9rsra4aazz7ndmwm93fngth8k98acksg6p37m",
+  "contracts": {
+    "DataCommitment": {
+      "address": "0200a8e253d6db90d13bc02e42667f2705b28208932a742007cf999f59cd334596d0",
+      "txHash": "76c074df4dec1e0a79479a4be243fe82ffddcf573ec94ae19b2c23f51ada27fe"
+    },
+    "ZKDeletionVerifier": {
+      "address": "0200983887c84b45fdd7bb93bc97a23a8e4d00080aea6b91f2a0c74db9c78c95ca67",
+      "txHash": "8327de61b165c5cba67b3012f43e6f61ee252e5715d1411a7f34945989b0c5f8"
+    }
+  },
+  "endpoints": {
+    "indexer": "https://indexer.testnet-02.midnight.network/api/v1/graphql",
+    "indexerWS": "wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws",
+    "node": "https://rpc.testnet-02.midnight.network",
+    "proofServer": "http://127.0.0.1:6300"
+  }
+}
