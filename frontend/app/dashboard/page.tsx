@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { apiClient, DataLocation } from "@/lib/api-client";
+import { useWallet } from "@/contexts/WalletContext";
+import { WalletAuthGate } from "@/components/blockchain/WalletAuthGate";
 
 interface ServiceView extends Omit<DataLocation, "deletedAt"> {
   id: string;
@@ -22,6 +24,7 @@ interface ServiceView extends Omit<DataLocation, "deletedAt"> {
 }
 
 export default function Dashboard() {
+  const { isConnected } = useWallet();
   const [userDID, setUserDID] = useState<string>(() => {
     // Try to load from localStorage first
     if (typeof window !== "undefined") {
@@ -43,6 +46,11 @@ export default function Dashboard() {
   >("confirm");
   const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Require wallet connection
+  if (!isConnected) {
+    return <WalletAuthGate />;
+  }
 
   const loadData = async () => {
     if (!userDID) return;

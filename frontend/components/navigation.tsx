@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { WalletConnectButton } from "@/components/blockchain/WalletConnectButton";
+import { useWallet } from "@/contexts/WalletContext";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isConnected } = useWallet();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -55,12 +57,14 @@ export function Navigation() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
             <WalletConnectButton />
-            <Link
-              href="/dashboard"
-              className="px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
-            >
-              Launch Dashboard
-            </Link>
+            {isConnected && (
+              <Link
+                href="/dashboard"
+                className="px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+              >
+                Launch Dashboard
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -103,13 +107,15 @@ export function Navigation() {
             >
               For Companies
             </Link>
-            <Link
-              href="/dashboard"
-              className="block px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors text-center"
-              onClick={() => setIsOpen(false)}
-            >
-              Launch Dashboard
-            </Link>
+            {isConnected && (
+              <Link
+                href="/dashboard"
+                className="block px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors text-center"
+                onClick={() => setIsOpen(false)}
+              >
+                Launch Dashboard
+              </Link>
+            )}
           </div>
         )}
       </div>

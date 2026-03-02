@@ -12,18 +12,12 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { apiClient } from "@/lib/api-client";
-
-interface DataLocation {
-  commitmentHash: string;
-  serviceProvider: string;
-  dataCategories: string[];
-  createdAt: number;
-  deleted: boolean;
-  deletionProofHash?: string;
-}
+import { apiClient, DataLocation } from "@/lib/api-client";
+import { useWallet } from "@/contexts/WalletContext";
+import { WalletAuthGate } from "@/components/blockchain/WalletAuthGate";
 
 export default function RealDashboard() {
+  const { isConnected } = useWallet();
   const [userDID, setUserDID] = useState("");
   const [dataLocations, setDataLocations] = useState<DataLocation[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,6 +26,11 @@ export default function RealDashboard() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Require wallet connection
+  if (!isConnected) {
+    return <WalletAuthGate />;
+  }
 
   const loadUserData = async () => {
     if (!userDID) {
@@ -195,7 +194,7 @@ export default function RealDashboard() {
           <div className="mb-12 p-6 rounded-lg bg-destructive/10 border border-destructive/30">
             <div className="flex items-start gap-4">
               <AlertCircle
-                className="text-destructive flex-shrink-0 mt-1"
+                className="text-destructive shrink-0 mt-1"
                 size={24}
               />
               <div className="flex-1">
@@ -277,7 +276,7 @@ export default function RealDashboard() {
                   </div>
 
                   <div className="text-sm text-muted-foreground mb-3">
-                    {location.dataCategories.join(", ")}
+                    {location.dataCategories?.join(", ") || "No categories"}
                   </div>
 
                   <div className="text-xs text-muted-foreground mb-3">

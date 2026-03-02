@@ -14,12 +14,20 @@ import { DataLocationCard } from "@/components/dashboard/DataLocationCard";
 import { DataVisualization } from "@/components/dashboard/DataVisualization";
 import { DeleteAllButton } from "@/components/dashboard/DeleteAllButton";
 import { TransactionMonitor } from "@/components/blockchain/TransactionMonitor";
+import { useWallet } from "@/contexts/WalletContext";
+import { WalletAuthGate } from "@/components/blockchain/WalletAuthGate";
 
 export default function UserDashboardPage() {
+  const { isConnected } = useWallet();
   const { userDID, setUserDID, dataLocations, loading, error, refreshData } =
     useDashboard();
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<"all" | "active" | "deleted">("all");
+
+  // Require wallet connection
+  if (!isConnected) {
+    return <WalletAuthGate />;
+  }
 
   // Set demo user DID on mount
   useEffect(() => {

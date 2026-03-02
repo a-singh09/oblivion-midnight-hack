@@ -4,8 +4,12 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
 import { CheckCircle, Lock, Zap } from "lucide-react";
+import { useWallet } from "@/contexts/WalletContext";
+import { WalletConnectButton } from "@/components/blockchain/WalletConnectButton";
 
 export default function Home() {
+  const { isConnected } = useWallet();
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -30,12 +34,18 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link
-              href="/dashboard"
-              className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-colors inline-block"
-            >
-              Launch Dashboard
-            </Link>
+            {isConnected ? (
+              <Link
+                href="/dashboard"
+                className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-colors inline-block"
+              >
+                Launch Dashboard
+              </Link>
+            ) : (
+              <div className="px-8 py-3">
+                <WalletConnectButton />
+              </div>
+            )}
             <Link
               href="/for-companies"
               className="px-8 py-3 border border-border text-foreground rounded-full font-semibold hover:bg-secondary transition-colors inline-block"
