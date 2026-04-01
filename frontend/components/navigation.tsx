@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Hexagon } from "lucide-react";
 import { WalletConnectButton } from "@/components/blockchain/WalletConnectButton";
 import { useWallet } from "@/contexts/WalletContext";
 
@@ -10,115 +10,89 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { isConnected } = useWallet();
 
+  const navLinks = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Register Data", href: "/company-registration" },
+    { name: "Demo", href: "/presentation" },
+    { name: "For Companies", href: "/for-companies" },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-              <span className="text-sm font-bold text-primary-foreground">
-                OP
-              </span>
-            </div>
-            <span className="text-lg font-semibold text-foreground">
-              Oblivion Protocol
-            </span>
-          </Link>
+    <nav className="fixed top-0 left-0 right-0 z-50 p-6 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-[5px] border-b border-white/5">
+      <div className="container flex justify-between items-center px-0">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <Hexagon size={28} className="text-accent" strokeWidth={1.5} />
+          <span className="font-serif text-xl font-bold tracking-[1px] text-foreground">
+            OBLIVION
+          </span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link
-              href="/dashboard"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/company-registration"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-            >
-              Register Data
-            </Link>
-            <Link
-              href="/presentation"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-            >
-              Demo
-            </Link>
-            <Link
-              href="/for-companies"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-            >
-              For Companies
-            </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          <div className="flex gap-8 items-center">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="font-mono text-[0.85rem] uppercase tracking-[1px] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
           </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          
+          <div className="flex items-center gap-4 ml-4">
             <WalletConnectButton />
             {isConnected && (
               <Link
                 href="/dashboard"
-                className="px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+                className="font-mono border border-accent text-accent px-4 py-2 rounded-[4px] text-[0.8rem] uppercase cursor-pointer hover:bg-accent/10 transition-all"
               >
-                Launch Dashboard
+                Launch App
               </Link>
             )}
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 hover:bg-secondary rounded-lg transition-colors"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-3">
-            <Link
-              href="/dashboard"
-              className="block text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/company-registration"
-              className="block text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Register Data
-            </Link>
-            <Link
-              href="/presentation"
-              className="block text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Demo
-            </Link>
-            <Link
-              href="/for-companies"
-              className="block text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              For Companies
-            </Link>
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-foreground p-2"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-md border-b border-white/5 py-6 px-6 flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="font-mono text-sm uppercase tracking-[1px] text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
+            <WalletConnectButton />
             {isConnected && (
               <Link
                 href="/dashboard"
-                className="block px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors text-center"
+                className="font-mono border border-accent text-accent px-4 py-3 rounded-[4px] text-sm uppercase text-center hover:bg-accent/10 transition-all"
                 onClick={() => setIsOpen(false)}
               >
-                Launch Dashboard
+                Launch App
               </Link>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 }

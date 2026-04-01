@@ -4,64 +4,37 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Dark theme color tokens for Oblivion Protocol */
-  --background: oklch(0.08 0 0);
-  /* Deep dark background */
-  --foreground: oklch(0.95 0 0);
-  /* Off-white text */
-  --card: oklch(0.12 0 0);
-  /* Dark card background */
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.12 0 0);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.52 0.165 185.88);
-  /* Teal/cyan primary */
-  --primary-foreground: oklch(0.95 0 0);
-  --secondary: oklch(0.35 0 0);
-  /* Dark gray secondary */
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.25 0 0);
-  /* Dark muted */
-  --muted-foreground: oklch(0.65 0 0);
-  /* Gray text */
-  --accent: oklch(0.55 0.15 190);
-  /* Emerald accent */
-  --accent-foreground: oklch(0.08 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.95 0 0);
-  /* Light text for destructive */
-  --border: oklch(0.18 0 0);
-  /* Dark borders */
-  --input: oklch(0.15 0 0);
-  --ring: oklch(0.52 0.165 185.88);
-  /* Teal ring */
-  --chart-1: oklch(0.70 0.20 200);
-  /* Bright cyan for charts */
-  --chart-2: oklch(0.75 0.18 160);
-  /* Bright green for charts */
-  --chart-3: oklch(0.68 0.15 280);
-  /* Bright purple for charts */
-  --chart-4: oklch(0.72 0.18 85);
-  /* Bright yellow for charts */
-  --chart-5: oklch(0.70 0.20 320);
-  /* Bright magenta for charts */
-  --radius: 0.625rem;
-  --sidebar: oklch(0.12 0 0);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.52 0.165 185.88);
-  --sidebar-primary-foreground: oklch(0.08 0 0);
-  --sidebar-accent: oklch(0.55 0.15 190);
-  --sidebar-accent-foreground: oklch(0.08 0 0);
-  --sidebar-border: oklch(0.18 0 0);
-  --sidebar-ring: oklch(0.52 0.165 185.88);
-  --font-inter: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-instrument-serif: "Instrument Serif", ui-serif, serif;
+  --bg-color: #000000;
+  --text-main: #fcfcfc;
+  --text-dim: #888888;
+  --accent-emerald: #00ff88;
+  --accent-teal: #00d4aa;
+  --background: #000000;
+  --foreground: #fcfcfc;
+  --card: #080808;
+  --card-foreground: #fcfcfc;
+  --popover: #080808;
+  --popover-foreground: #fcfcfc;
+  --primary: #00ff88;
+  --primary-foreground: #000000;
+  --secondary: transparent;
+  --secondary-foreground: #fcfcfc;
+  --muted: #080808;
+  --muted-foreground: #888888;
+  --accent: #00ff88;
+  --accent-foreground: #000000;
+  --destructive: #ff3333;
+  --destructive-foreground: #fcfcfc;
+  --border: #1a1a1a;
+  --input: #1a1a1a;
+  --ring: #00ff88;
+  --radius: 0.125rem; /* 2px matching design reference */
 }
 
 @theme inline {
   --font-sans: var(--font-inter);
-  --font-serif: var(--font-instrument-serif);
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --font-serif: var(--font-playfair);
+  --font-mono: var(--font-roboto-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -81,23 +54,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
@@ -106,7 +62,133 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold leading-tight;
+  }
+}
+
+/* Utilities from design reference */
+.mono {
+  font-family: var(--font-mono);
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--accent-emerald), var(--accent-teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.glow {
+  filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.6));
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+::selection {
+  background-color: var(--accent-emerald);
+  color: #000;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 1rem 2.5rem;
+  border-radius: 2px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.button-primary {
+  background: linear-gradient(90deg, var(--accent-emerald), var(--accent-teal));
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+  border: none;
+}
+
+.button-primary:hover {
+  box-shadow: 0 0 35px rgba(0, 255, 136, 0.4);
+  transform: translateY(-2px);
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.button-secondary:hover {
+  border-color: var(--accent-emerald);
+  color: var(--accent-emerald);
+  background: rgba(0, 255, 136, 0.05);
+  transform: translateY(-2px);
+}
+
+.section {
+  padding: 8rem 0;
+  position: relative;
+}
+
+.text-dim {
+  color: var(--text-dim);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  color: var(--accent-emerald);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-emerald);
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 8px var(--accent-emerald);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4);
+  }
+  70% {
+    opacity: 1;
+    box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
+  }
+  100% {
+    opacity: 0.5;
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
   }
 }
 
@@ -123,17 +205,12 @@
   font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.font-instrument-serif {
-  font-family: var(--font-instrument-serif);
-  font-display: swap;
+.font-playfair {
+  font-family: var(--font-playfair), ui-serif, serif;
 }
 
-/* Added explicit font loading optimization */
-@supports (font-display: swap) {
-  @font-face {
-    font-family: "Instrument Serif";
-    font-display: swap;
-  }
+.font-roboto-mono {
+  font-family: var(--font-roboto-mono), ui-monospace, monospace;
 }
 
 .mix-blend-multiply {

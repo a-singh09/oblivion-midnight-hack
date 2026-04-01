@@ -80,72 +80,75 @@ export default function CompanyRegistration() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground pt-16">
       <Navigation />
 
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <Building2 size={32} className="text-primary" />
-              <h1 className="text-4xl md:text-5xl font-semibold text-foreground">
-                Company Data Registration
+      <section className="section py-20 px-4 sm:px-6 lg:px-8">
+        <div className="container max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-accent/5 rounded-xl border border-accent/10 flex items-center justify-center">
+                <Building2 size={24} className="text-accent" />
+              </div>
+              <h1 className="font-serif text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-tight m-0 leading-none">
+                Company Registration
               </h1>
             </div>
             <StatusIndicator />
           </div>
 
-          <p className="text-xl text-muted-foreground mb-12">
+          <p className="mono text-dim text-lg mb-12 max-w-2xl">
             Register user data with cryptographic commitments on the Midnight
             blockchain. This enables users to track and delete their data with
             ZK proofs.
           </p>
 
           {/* Info Cards */}
-          <div className="grid md:grid-cols-3 gap-4 mb-12">
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
             {[
               {
-                icon: <Shield size={20} />,
+                icon: <Shield size={24} className="text-accent" />,
                 title: "Privacy First",
                 desc: "Data encrypted, only commitments on-chain",
               },
               {
-                icon: <CheckCircle size={20} />,
+                icon: <CheckCircle size={24} className="text-accent" />,
                 title: "GDPR Compliant",
                 desc: "Automatic deletion proof generation",
               },
               {
-                icon: <Building2 size={20} />,
+                icon: <Building2 size={24} className="text-accent" />,
                 title: "Easy Integration",
                 desc: "Simple REST API for your systems",
               },
             ].map((item, i) => (
               <div
                 key={i}
-                className="p-4 rounded-lg bg-secondary/30 border border-border"
+                className="bg-[#080808] border border-[#1a1a1a] p-6 rounded-lg transition-transform hover:-translate-y-1"
               >
-                <div className="flex items-center gap-2 mb-2 text-primary">
+                <div className="mb-4">
                   {item.icon}
-                  <h3 className="font-semibold text-foreground">
-                    {item.title}
-                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <h3 className="font-serif text-xl font-bold mb-2">
+                  {item.title}
+                </h3>
+                <p className="mono text-dim text-sm">{item.desc}</p>
               </div>
             ))}
           </div>
 
           {/* Registration Form */}
-          <div className="p-8 rounded-lg bg-secondary/20 border border-border">
-            <h2 className="text-2xl font-semibold text-foreground mb-6">
+          <div className="bg-[#080808] border border-[#1a1a1a] p-8 md:p-10 rounded-lg mb-16 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-[#00d4aa]"></div>
+            <h2 className="font-serif text-3xl font-bold mb-8">
               Register User Data
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* User DID */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  User DID <span className="text-destructive">*</span>
+                <label className="block mono text-sm font-bold text-foreground mb-3 tracking-widest uppercase text-dim">
+                  User DID <span className="text-[#ff3333]">*</span>
                 </label>
                 <input
                   type="text"
@@ -156,17 +159,17 @@ export default function CompanyRegistration() {
                   placeholder="did:midnight:..."
                   required
                   disabled
-                  className="w-full px-4 py-2 rounded-lg border border-border bg-secondary/50 text-foreground focus:border-primary focus:outline-none cursor-not-allowed opacity-75"
+                  className="w-full px-5 py-4 rounded bg-[#050505] border border-[#1a1a1a] text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent font-mono text-sm opacity-50 cursor-not-allowed transition-all"
                 />
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-2 mono text-xs text-dim">
                   Demo user DID
                 </p>
               </div>
 
               {/* Service Provider */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Service Provider <span className="text-destructive">*</span>
+                <label className="block mono text-sm font-bold text-foreground mb-3 tracking-widest uppercase text-dim">
+                  Service Provider <span className="text-[#ff3333]">*</span>
                 </label>
                 <input
                   type="text"
@@ -179,14 +182,14 @@ export default function CompanyRegistration() {
                   }
                   placeholder="Your Company Name"
                   required
-                  className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+                  className="w-full px-5 py-4 rounded bg-[#0a0a0a] border border-[#1a1a1a] text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent font-mono text-sm transition-all"
                 />
               </div>
 
               {/* Data Type */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Data Type <span className="text-destructive">*</span>
+                <label className="block mono text-sm font-bold text-foreground mb-3 tracking-widest uppercase text-dim">
+                  Data Type <span className="text-[#ff3333]">*</span>
                 </label>
                 <select
                   value={formData.dataType}
@@ -194,7 +197,8 @@ export default function CompanyRegistration() {
                     setFormData({ ...formData, dataType: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+                  className="w-full px-5 py-4 rounded bg-[#0a0a0a] border border-[#1a1a1a] text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent font-mono text-sm transition-all appearance-none"
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center' }}
                 >
                   <option value="">Select data type...</option>
                   {dataTypeOptions.map((type) => (
@@ -207,20 +211,20 @@ export default function CompanyRegistration() {
 
               {/* Data */}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Data <span className="text-destructive">*</span>
+                <label className="block mono text-sm font-bold text-foreground mb-3 tracking-widest uppercase text-dim">
+                  Data JSON <span className="text-[#ff3333]">*</span>
                 </label>
                 <textarea
                   value={formData.data}
                   onChange={(e) =>
                     setFormData({ ...formData, data: e.target.value })
                   }
-                  placeholder='{"email": "user@example.com", "name": "John Doe"}'
+                  placeholder="{\n  &quot;email&quot;: &quot;user@example.com&quot;,\n  &quot;name&quot;: &quot;John Doe&quot;\n}"
                   required
                   rows={4}
-                  className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:border-primary focus:outline-none font-mono text-sm"
+                  className="w-full px-5 py-4 rounded bg-[#0a0a0a] border border-[#1a1a1a] text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent font-mono text-sm transition-all resize-y"
                 />
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-2 mono text-xs text-dim">
                   JSON object or plain text. Data will be encrypted before
                   storage.
                 </p>
@@ -228,27 +232,27 @@ export default function CompanyRegistration() {
 
               {/* Success Message */}
               {success && (
-                <div className="p-4 rounded-lg bg-accent/10 border border-accent/30">
-                  <div className="flex items-center gap-2 text-accent mb-3">
-                    <Check size={20} />
-                    <span className="font-semibold">
+                <div className="p-6 rounded border border-accent/30 bg-[radial-gradient(ellipse_at_top_left,rgba(0,255,136,0.1),transparent)]">
+                  <div className="flex items-center gap-3 text-accent mb-4">
+                    <Check size={24} />
+                    <span className="font-serif text-xl font-bold">
                       Data registered successfully!
                     </span>
                   </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div className="p-3 rounded bg-background/50 border border-border">
-                      <div className="font-medium text-foreground mb-1">
+                  <div className="space-y-4">
+                    <div className="p-5 rounded bg-[#0a0a0a] border border-[#1a1a1a]">
+                      <div className="mono text-dim text-xs tracking-widest uppercase mb-2">
                         Your DID (Save this!):
                       </div>
-                      <code className="text-xs text-primary break-all font-mono">
+                      <code className="text-sm text-accent break-all font-mono block mb-4 p-3 bg-black rounded border border-[#222]">
                         {formData.userDID}
                       </code>
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="mono text-xs text-dim">
                         💡 This DID has been saved. Go to{" "}
                         <a
                           href="/dashboard"
-                          className="text-primary hover:underline font-medium"
+                          className="text-accent hover:underline border-b border-accent/30 hover:border-accent"
                         >
                           Dashboard
                         </a>{" "}
@@ -257,9 +261,9 @@ export default function CompanyRegistration() {
                     </div>
 
                     {txHash && (
-                      <div className="text-muted-foreground">
-                        <span className="font-medium">Transaction Hash:</span>
-                        <code className="ml-2 text-xs break-all">{txHash}</code>
+                      <div className="mono text-dim text-sm flex flex-col gap-2">
+                        <span className="tracking-widest uppercase text-xs">Transaction Hash:</span>
+                        <code className="text-xs break-all text-white p-3 bg-[#0a0a0a] rounded border border-[#1a1a1a]">{txHash}</code>
                       </div>
                     )}
                   </div>
@@ -268,7 +272,8 @@ export default function CompanyRegistration() {
 
               {/* Error Message */}
               {error && (
-                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
+                <div className="p-5 rounded bg-[#200000] border border-[#ff3333]/30 text-[#ff3333] mono text-sm flex items-center gap-3">
+                  <Shield size={20} />
                   {error}
                 </div>
               )}
@@ -277,16 +282,15 @@ export default function CompanyRegistration() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="button button-primary w-full py-5 text-base mt-4"
               >
                 {loading ? (
                   <>
-                    <Loader2 size={20} className="animate-spin" />
+                    <Loader2 size={20} className="animate-spin mr-3" />
                     Registering...
                   </>
                 ) : (
                   <>
-                    <Shield size={20} />
                     Register Data
                   </>
                 )}
@@ -295,46 +299,47 @@ export default function CompanyRegistration() {
           </div>
 
           {/* API Documentation */}
-          <div className="mt-12 p-8 rounded-lg bg-secondary/20 border border-border">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">
+          <div className="bg-[#080808] border border-[#1a1a1a] p-8 md:p-10 rounded-lg">
+            <h2 className="font-serif text-3xl font-bold mb-4">
               API Integration
             </h2>
-            <p className="text-muted-foreground mb-6">
-              Integrate Oblivion Protocol into your systems with our REST API:
+            <p className="mono text-dim text-sm mb-8 leading-[1.6]">
+              Integrate Oblivion Protocol into your systems natively with our REST API:
             </p>
 
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-background border border-border">
-                <div className="text-sm font-semibold text-foreground mb-2">
-                  POST /api/register-data
+            <div className="space-y-6">
+              {[
+                {
+                  method: "POST",
+                  endpoint: "/api/register-data",
+                  code: `{\n  "userDID": "did:midnight:...",\n  "data": { "email": "user@example.com" },\n  "dataType": "personal_info",\n  "serviceProvider": "YourCompany"\n}`
+                },
+                {
+                  method: "GET",
+                  endpoint: "/api/user/:did/footprint",
+                  desc: "Returns all data locations for a user DID"
+                },
+                {
+                  method: "POST",
+                  endpoint: "/api/user/:did/delete-all",
+                  desc: "Deletes all user data and generates ZK proofs"
+                }
+              ].map((api, idx) => (
+                <div key={idx} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded p-5">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className={`mono text-xs font-bold px-2 py-1 rounded ${api.method === 'GET' ? 'bg-[#27c93f]/20 text-[#27c93f]' : 'bg-[#ffbd2e]/20 text-[#ffbd2e]'}`}>
+                      {api.method}
+                    </span>
+                    <span className="mono text-sm text-foreground">{api.endpoint}</span>
+                  </div>
+                  {api.code && (
+                    <pre className="text-xs text-dim overflow-x-auto bg-black p-4 rounded border border-[#222] mt-3">{api.code}</pre>
+                  )}
+                  {api.desc && (
+                    <p className="mono text-xs text-dim mt-2">{api.desc}</p>
+                  )}
                 </div>
-                <pre className="text-xs text-muted-foreground overflow-x-auto">
-                  {`{
-  "userDID": "did:midnight:...",
-  "data": { "email": "user@example.com" },
-  "dataType": "personal_info",
-  "serviceProvider": "YourCompany"
-}`}
-                </pre>
-              </div>
-
-              <div className="p-4 rounded-lg bg-background border border-border">
-                <div className="text-sm font-semibold text-foreground mb-2">
-                  GET /api/user/:did/footprint
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Returns all data locations for a user DID
-                </p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-background border border-border">
-                <div className="text-sm font-semibold text-foreground mb-2">
-                  POST /api/user/:did/delete-all
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Deletes all user data and generates ZK proofs
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
