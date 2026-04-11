@@ -139,13 +139,15 @@ async function testContractInteraction() {
   };
 
   console.log("Step 2: Loading DataCommitment contract...");
-  const contractModulePath = path.join(
+  const contractDir = path.join(
     process.cwd(),
     "managed",
     "DataCommitment",
     "contract",
-    "index.cjs",
   );
+  const contractModulePath = fs.existsSync(path.join(contractDir, "index.js"))
+    ? path.join(contractDir, "index.js")
+    : path.join(contractDir, "index.cjs");
 
   const ContractModule = await import(contractModulePath);
   const witnesses = createDataCommitmentWitnesses();

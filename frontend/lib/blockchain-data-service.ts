@@ -31,7 +31,7 @@ export class BlockchainDataService {
 
   constructor() {
     this.indexerUrl = deploymentConfig.endpoints.indexer;
-    this.explorerBaseUrl = "https://explorer.testnet-02.midnight.network";
+    this.explorerBaseUrl = "https://explorer.preprod.midnight.network";
   }
 
   /**

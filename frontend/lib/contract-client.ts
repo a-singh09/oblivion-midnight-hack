@@ -3,7 +3,7 @@
  * Handles direct communication with deployed smart contracts
  */
 
-import deployment from "../../../contracts/deployment.json";
+import deployment from "../../contracts/deployment.json";
 
 export interface CommitmentParams {
   commitmentHash: string;

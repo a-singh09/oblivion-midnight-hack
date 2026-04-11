@@ -26,7 +26,7 @@ export function TransactionCard({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const explorerUrl = `https://explorer.testnet-02.midnight.network/tx/${hash}`;
+  const explorerUrl = `https://explorer.preprod.midnight.network/tx/${hash}`;
 
   return (
     <div className="p-4 rounded-lg bg-secondary/30 border border-border">

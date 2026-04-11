@@ -249,7 +249,7 @@ export function DeletionRequestCard({
 
             {localStatus === "completed" && (
               <a
-                href={`https://explorer.midnight.network/deletion/${request.id}`}
+                href={`https://explorer.preprod.midnight.network/deletion/${request.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:underline flex items-center gap-1"

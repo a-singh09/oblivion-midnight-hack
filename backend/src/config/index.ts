@@ -1,9 +1,7 @@
 import { config } from "dotenv";
 import { StorageConfig } from "../types";
 import { MidnightConfig } from "../midnight/MidnightClient";
-import { NetworkId } from "@midnight-ntwrk/midnight-js-network-id";
 
-// Load environment variables
 config();
 
 /**
@@ -64,34 +62,47 @@ function getStorageConfig(): StorageConfig {
  * Get Midnight configuration from environment variables
  */
 function getMidnightConfig(): MidnightConfig {
-  const networkId = process.env.MIDNIGHT_NETWORK_ID || "testnet";
+  const usePreprod = (process.env.MIDNIGHT_USE_PREPROD ?? "0") === "1";
+  const networkId =
+    process.env.MIDNIGHT_NETWORK_ID ?? (usePreprod ? "preprod" : "undeployed");
 
-  // Map string network ID to NetworkId enum from SDK
-  let midnightNetworkId: NetworkId;
-  switch (networkId.toLowerCase()) {
-    case "testnet":
-      midnightNetworkId = NetworkId.TestNet;
-      break;
-    case "mainnet":
-      midnightNetworkId = NetworkId.MainNet;
-      break;
-    case "devnet":
-      midnightNetworkId = NetworkId.Undeployed; // DevNet uses Undeployed
-      break;
-    default:
-      midnightNetworkId = NetworkId.TestNet;
-  }
+  const defaultNodeUrl = usePreprod
+    ? "https://rpc.preprod.midnight.network"
+    : "http://127.0.0.1:3086";
+  const defaultIndexerUrl = usePreprod
+    ? "https://indexer.preprod.midnight.network/api/v4/graphql"
+    : "http://127.0.0.1:3085/api";
+  const defaultIndexerWsUrl = usePreprod
+    ? "wss://indexer.preprod.midnight.network/api/v4/graphql/ws"
+    : "ws://127.0.0.1:3085/ws";
+  const defaultProofServerUrl = "http://localhost:6300";
+
+  const nodeUrl =
+    process.env.MIDNIGHT_NODE_URL ||
+    process.env.MIDNIGHT_SUBSTRATE_NODE_URI ||
+    defaultNodeUrl;
+
+  const indexerUrl =
+    process.env.MIDNIGHT_INDEXER_URL ||
+    process.env.MIDNIGHT_INDEXER_URI ||
+    defaultIndexerUrl;
+
+  const indexerWsUrl =
+    process.env.MIDNIGHT_INDEXER_WS_URL ||
+    process.env.MIDNIGHT_INDEXER_WS_URI ||
+    defaultIndexerWsUrl;
+
+  const proofServerUrl =
+    process.env.MIDNIGHT_PROOF_SERVER_URL ||
+    process.env.MIDNIGHT_PROVER_SERVER_URI ||
+    defaultProofServerUrl;
 
   return {
-    nodeUrl:
-      process.env.MIDNIGHT_NODE_URL ||
-      "https://rpc.testnet-02.midnight.network",
-    indexerUrl:
-      process.env.MIDNIGHT_INDEXER_URL ||
-      "https://indexer.testnet-02.midnight.network/api/v1/graphql",
-    proofServerUrl:
-      process.env.MIDNIGHT_PROOF_SERVER_URL || "http://localhost:6300",
-    networkId: midnightNetworkId,
+    nodeUrl,
+    indexerUrl,
+    indexerWsUrl,
+    proofServerUrl,
+    networkId,
     walletSeed: process.env.MIDNIGHT_WALLET_SEED,
     dataCommitmentContract: process.env.DATA_COMMITMENT_CONTRACT,
     zkDeletionVerifierContract: process.env.ZK_DELETION_VERIFIER_CONTRACT,
@@ -148,7 +159,7 @@ export function validateConfig(): void {
 
   console.log("Configuration validation passed");
   console.log(
-    `Midnight Network: ${process.env.MIDNIGHT_NETWORK_ID || "testnet"}`,
+    `Midnight Network: ${process.env.MIDNIGHT_NETWORK_ID || "undeployed"}`,
   );
   console.log(
     `Data Commitment Contract: ${process.env.DATA_COMMITMENT_CONTRACT || "Not set"}`,

@@ -128,7 +128,7 @@ export function IndividualDeleteButton({
                 </p>
                 {proofHash && (
                   <a
-                    href={`https://explorer.midnight.network/proof/${proofHash}`}
+                    href={`https://explorer.preprod.midnight.network/proof/${proofHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors mb-3"

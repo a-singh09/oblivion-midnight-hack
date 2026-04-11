@@ -43,13 +43,13 @@ export function ProofVerificationWidget({
       label: "Commitment Hash on Blockchain",
       value: proof.commitmentHash,
       verified: true,
-      link: `https://explorer.midnight.network/commitment/${proof.commitmentHash}`,
+      link: `https://explorer.preprod.midnight.network/commitment/${proof.commitmentHash}`,
     },
     {
       label: "Deletion Proof Hash",
       value: proof.deletionProofHash,
       verified: proof.zkProofVerified,
-      link: `https://explorer.midnight.network/proof/${proof.deletionProofHash}`,
+      link: `https://explorer.preprod.midnight.network/proof/${proof.deletionProofHash}`,
     },
     {
       label: "ZK-SNARK Verification",
@@ -60,7 +60,7 @@ export function ProofVerificationWidget({
       label: "Block Confirmation",
       value: `Block #${proof.blockNumber.toLocaleString()}`,
       verified: true,
-      link: `https://explorer.midnight.network/block/${proof.blockNumber}`,
+      link: `https://explorer.preprod.midnight.network/block/${proof.blockNumber}`,
     },
     {
       label: "Cryptographic Signature",

@@ -7,7 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, Play, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
-const examples = {
+type PlaygroundExample = {
+  title: string;
+  description: string;
+  code: string;
+  endpoint: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  payload?: Record<string, unknown>;
+};
+
+const examples: Record<string, PlaygroundExample> = {
   register: {
     title: "Register User Data",
     description: "Automatically register user data with GDPR compliance",
@@ -114,7 +123,7 @@ export function SDKPlayground() {
       }
 
       // Fallback: Demo mode response
-      const demoResponses = {
+      const demoResponses: Record<ExampleKey, unknown> = {
         register: {
           success: true,
           commitmentHash: "0x" + Math.random().toString(16).slice(2, 66),

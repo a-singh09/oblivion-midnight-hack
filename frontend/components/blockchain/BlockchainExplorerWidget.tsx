@@ -32,8 +32,8 @@ export function BlockchainExplorerWidget({
     "verifying" | "verified" | "failed"
   >("verifying");
 
-  const explorerUrl = `https://explorer.midnight.network/tx/${transactionHash}`;
-  const proofUrl = `https://explorer.midnight.network/proof/${proofHash}`;
+  const explorerUrl = `https://explorer.preprod.midnight.network/tx/${transactionHash}`;
+  const proofUrl = `https://explorer.preprod.midnight.network/proof/${proofHash}`;
 
   useEffect(() => {
     // Simulate verification
@@ -173,10 +173,7 @@ export function BlockchainExplorerWidget({
       {verificationStatus === "verified" && (
         <div className="mb-6 p-4 rounded-lg bg-accent/10 border border-accent/30">
           <div className="flex items-start gap-3">
-            <CheckCircle
-              className="text-accent flex-shrink-0 mt-0.5"
-              size={20}
-            />
+            <CheckCircle className="text-accent shrink-0 mt-0.5" size={20} />
             <div className="flex-1">
               <div className="font-semibold text-foreground mb-1">
                 ZK Proof Validated

@@ -19,10 +19,13 @@ async function testMidnightIntegration() {
       "https://rpc.testnet-02.midnight.network",
     indexerUrl:
       process.env.MIDNIGHT_INDEXER_URL ||
-      "https://indexer.testnet-02.midnight.network/api/v1/graphql",
+      "https://indexer.testnet-02.midnight.network/api/v3/graphql",
+    indexerWsUrl:
+      process.env.MIDNIGHT_INDEXER_WS_URL ||
+      "wss://indexer.testnet-02.midnight.network/api/v3/graphql/ws",
     proofServerUrl:
       process.env.MIDNIGHT_PROOF_SERVER_URL || "http://localhost:6300",
-    networkId: (process.env.MIDNIGHT_NETWORK_ID as any) || "testnet",
+    networkId: (process.env.MIDNIGHT_NETWORK_ID as any) || "preview",
     walletSeed: process.env.MIDNIGHT_WALLET_SEED,
     dataCommitmentContract: process.env.DATA_COMMITMENT_CONTRACT,
     zkDeletionVerifierContract: process.env.ZK_DELETION_VERIFIER_CONTRACT,

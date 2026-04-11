@@ -51,7 +51,7 @@ export function DataVisualization({ dataLocations }: DataVisualizationProps) {
   // Count data by category
   const categoryData = dataLocations.reduce(
     (acc, location) => {
-      location.dataCategories.forEach((category) => {
+      (location.dataCategories ?? []).forEach((category) => {
         if (!acc[category]) {
           acc[category] = 0;
         }

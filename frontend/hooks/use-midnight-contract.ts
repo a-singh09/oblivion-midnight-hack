@@ -7,14 +7,14 @@ import { MidnightContractService } from "@/lib/midnight-contract-service";
 import { useMemo } from "react";
 
 export function useMidnightContract() {
-  const { wallet, isConnected } = useWallet();
+  const { connectedApi, isConnected } = useWallet();
 
   const contractService = useMemo(() => {
-    if (!wallet || !isConnected) {
+    if (!connectedApi || !isConnected) {
       return null;
     }
-    return new MidnightContractService(wallet);
-  }, [wallet, isConnected]);
+    return new MidnightContractService(connectedApi);
+  }, [connectedApi, isConnected]);
 
   return {
     contractService,

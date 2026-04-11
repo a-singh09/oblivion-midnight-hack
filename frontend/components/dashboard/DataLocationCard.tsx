@@ -39,7 +39,7 @@ export function DataLocationCard({
             {location.serviceProvider}
           </h3>
           <div className="flex flex-wrap gap-2 mb-2">
-            {location.dataCategories.map((category, idx) => (
+            {(location.dataCategories ?? []).map((category, idx) => (
               <span
                 key={idx}
                 className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground bg-secondary px-2 py-1 rounded-full"

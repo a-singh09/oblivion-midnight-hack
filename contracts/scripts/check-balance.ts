@@ -1,40 +1,131 @@
-import { WalletBuilder } from "@midnight-ntwrk/wallet";
-import {
-  NetworkId,
-  setNetworkId,
-  getZswapNetworkId,
-} from "@midnight-ntwrk/midnight-js-network-id";
-import { nativeToken } from "@midnight-ntwrk/ledger";
 import { WebSocket } from "ws";
-import * as readline from "readline/promises";
-import * as Rx from "rxjs";
-
-// Fix WebSocket for Node.js environment
-// @ts-ignore
+// @ts-expect-error Required for wallet sync
 globalThis.WebSocket = WebSocket;
 
-// Configure for Midnight Testnet
-setNetworkId(NetworkId.TestNet);
+import {
+  setNetworkId,
+  getNetworkId,
+} from "@midnight-ntwrk/midnight-js-network-id";
+import { WalletFacade } from "@midnight-ntwrk/wallet-sdk-facade";
+import { DustWallet } from "@midnight-ntwrk/wallet-sdk-dust-wallet";
+import {
+  HDWallet,
+  Roles,
+  generateRandomSeed,
+} from "@midnight-ntwrk/wallet-sdk-hd";
+import { ShieldedWallet } from "@midnight-ntwrk/wallet-sdk-shielded";
+import {
+  createKeystore,
+  InMemoryTransactionHistoryStorage,
+  PublicKey,
+  UnshieldedWallet,
+} from "@midnight-ntwrk/wallet-sdk-unshielded-wallet";
+import * as ledger from "@midnight-ntwrk/ledger-v8";
+import * as readline from "readline/promises";
+import { stdin, stdout } from "process";
+import { Buffer } from "buffer";
+import {
+  MIDNIGHT_NETWORK_ID,
+  MIDNIGHT_NETWORK_MODE,
+  MIDNIGHT_NETWORK_PROFILES,
+  MIDNIGHT_FAUCET_URL,
+} from "./midnight-network";
 
-const TESTNET_CONFIG = {
-  indexer: "https://indexer.testnet-02.midnight.network/api/v1/graphql",
-  indexerWS: "wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws",
-  node: "https://rpc.testnet-02.midnight.network",
-  proofServer: "http://127.0.0.1:6300",
-};
+setNetworkId(MIDNIGHT_NETWORK_ID as any);
 
-async function main() {
-  console.log("╔════════════════════════════════════════════════════════╗");
-  console.log("║        Midnight Wallet Balance Checker                ║");
-  console.log("╚════════════════════════════════════════════════════════╝\n");
+function deriveKeys(seed: string) {
+  const hdWallet = HDWallet.fromSeed(Buffer.from(seed, "hex"));
+  if (hdWallet.type !== "seedOk") throw new Error("Invalid seed");
+  const result = hdWallet.hdWallet
+    .selectAccount(0)
+    .selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust])
+    .deriveKeysAt(0);
+  if (result.type !== "keysDerived") throw new Error("Key derivation failed");
+  hdWallet.hdWallet.clear();
+  return result.keys;
+}
 
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+async function createWallet(
+  seed: string,
+  networkConfig = MIDNIGHT_NETWORK_PROFILES[0],
+) {
+  const keys = deriveKeys(seed);
+  const networkId = getNetworkId();
+
+  const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(keys[Roles.Zswap]);
+  const dustSecretKey = ledger.DustSecretKey.fromSeed(keys[Roles.Dust]);
+  const unshieldedKeystore = createKeystore(
+    keys[Roles.NightExternal],
+    networkId,
+  );
+
+  const walletConfig = {
+    networkId,
+    indexerClientConnection: {
+      indexerHttpUrl: networkConfig.indexer,
+      indexerWsUrl: networkConfig.indexerWS,
+    },
+    provingServerUrl: new URL(networkConfig.proofServer),
+    relayURL: new URL(networkConfig.node),
+  };
+
+  const wallet = await WalletFacade.init({
+    configuration: walletConfig,
+    shielded: (config) =>
+      ShieldedWallet(config).startWithSecretKeys(shieldedSecretKeys),
+    unshielded: (config) =>
+      UnshieldedWallet({
+        ...config,
+        txHistoryStorage: new InMemoryTransactionHistoryStorage(),
+      }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore)),
+    dust: (config) =>
+      DustWallet({
+        ...config,
+        costParameters: {
+          additionalFeeOverhead: 300_000_000_000_000n,
+          feeBlocksMargin: 5,
+        },
+      }).startWithSecretKey(
+        dustSecretKey,
+        ledger.LedgerParameters.initialParameters().dust,
+      ),
   });
 
+  await wallet.start(shieldedSecretKeys, dustSecretKey);
+  return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
+}
+
+async function waitForSyncWithTimeout(
+  wallet: { waitForSyncedState: () => Promise<any> },
+  timeoutMs: number,
+) {
+  return await Promise.race([
+    wallet.waitForSyncedState(),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout has occurred")), timeoutMs),
+    ),
+  ]);
+}
+
+async function main() {
+  const syncTimeoutMs = Number(
+    process.env.MIDNIGHT_SYNC_TIMEOUT_MS ?? "120000",
+  );
+  console.log("╔════════════════════════════════════════════════════════╗");
+  console.log(
+    `║  Midnight Wallet Balance Checker (${MIDNIGHT_NETWORK_MODE.toUpperCase().padEnd(17)})║`,
+  );
+  console.log("╚════════════════════════════════════════════════════════╝\n");
+
+  const providedSeed = process.env.MIDNIGHT_SEED?.trim();
+  const rl = providedSeed
+    ? null
+    : readline.createInterface({ input: stdin, output: stdout });
+
   try {
-    const walletSeed = await rl.question("Enter your 64-character hex seed: ");
+    const walletSeed =
+      providedSeed ??
+      (await rl!.question("Enter your 64-character hex seed: "));
 
     if (!/^[0-9a-fA-F]{64}$/.test(walletSeed)) {
       throw new Error(
@@ -42,67 +133,68 @@ async function main() {
       );
     }
 
-    console.log("\nBuilding wallet...");
-    const wallet = await WalletBuilder.buildFromSeed(
-      TESTNET_CONFIG.indexer,
-      TESTNET_CONFIG.indexerWS,
-      TESTNET_CONFIG.proofServer,
-      TESTNET_CONFIG.node,
-      walletSeed,
-      getZswapNetworkId(),
-      "info",
+    console.log("\nCreating wallet...");
+
+    console.log(
+      `Syncing with ${MIDNIGHT_NETWORK_MODE} network (timeout ${Math.round(syncTimeoutMs / 1000)}s)...`,
     );
 
-    wallet.start();
+    let walletCtx: Awaited<ReturnType<typeof createWallet>> | null = null;
+    let state: any;
+    let activeProfile: (typeof MIDNIGHT_NETWORK_PROFILES)[number] | null = null;
+    let lastError: unknown = null;
 
-    console.log("Waiting for wallet to sync...\n");
+    for (const profile of MIDNIGHT_NETWORK_PROFILES) {
+      try {
+        console.log(`Attempting profile: ${profile.name}`);
+        walletCtx = await createWallet(walletSeed, profile);
+        state = await waitForSyncWithTimeout(
+          walletCtx.wallet as any,
+          syncTimeoutMs,
+        );
+        activeProfile = profile;
+        console.log(`✓ Synced using profile: ${profile.name}`);
+        break;
+      } catch (error) {
+        lastError = error;
+        if (walletCtx) {
+          await walletCtx.wallet.stop().catch(() => undefined);
+        }
+        walletCtx = null;
+      }
+    }
 
-    // Wait for sync and get state
-    const state = await Rx.firstValueFrom(
-      wallet.state().pipe(
-        Rx.tap((s) => {
-          if (s.syncProgress) {
-            console.log(
-              `Sync: synced=${s.syncProgress.synced}, lag=${s.syncProgress.lag.sourceGap}`,
-            );
-          }
-        }),
-        Rx.filter((s) => s.syncProgress?.synced === true),
-        Rx.take(1),
-      ),
-    );
+    if (!walletCtx || !activeProfile) {
+      throw lastError instanceof Error
+        ? lastError
+        : new Error("Timeout has occurred");
+    }
+
+    const address = walletCtx.unshieldedKeystore.getBech32Address();
+    const balance =
+      state.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
 
     console.log("\n✓ Wallet synced!");
-    console.log(`\nWallet Address: ${state.address}`);
-    console.log(`\nBalances:`);
-
-    const balance = state.balances[nativeToken()] || 0n;
-    console.log(`  Native Token (tDUST): ${balance}`);
+    console.log(`\nWallet Address: ${address}`);
+    console.log(`tNight Balance: ${balance.toLocaleString()}`);
 
     if (balance === 0n) {
       console.log("\n⚠️  Balance is 0");
-      console.log("\nPossible reasons:");
-      console.log("  1. Funds sent to different address format");
-      console.log("  2. Transaction not yet confirmed");
-      console.log("  3. Wrong network (testnet vs mainnet)");
       console.log("\nTo get test tokens:");
-      console.log(`  Visit: https://midnight.network/test-faucet`);
-      console.log(`  Use address: ${state.address}`);
+      console.log(`  Visit: ${MIDNIGHT_FAUCET_URL}`);
+      console.log(`  Use address: ${address}`);
     } else {
-      console.log(`\n✓ Wallet has sufficient balance for deployment`);
+      console.log("\n✓ Wallet has sufficient balance for deployment");
     }
 
-    console.log("\nAll balances:");
-    for (const [token, amount] of Object.entries(state.balances)) {
-      console.log(`  ${token}: ${amount}`);
-    }
-
-    await wallet.close();
+    console.log("\nWallet state synced successfully.");
   } catch (error) {
-    console.error("\n❌ Error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("\n❌ Error:", message);
+
     process.exit(1);
   } finally {
-    rl.close();
+    rl?.close();
   }
 }
 

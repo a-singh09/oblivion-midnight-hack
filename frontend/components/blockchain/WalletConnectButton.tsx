@@ -15,8 +15,14 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function WalletConnectButton() {
-  const { isConnected, address, isConnecting, error, connect, disconnect } =
-    useWallet();
+  const {
+    isConnected,
+    unshieldedAddress,
+    isConnecting,
+    error,
+    connect,
+    disconnect,
+  } = useWallet();
 
   const formatAddress = (addr: string) => {
     if (addr.length <= 12) return addr;
@@ -32,20 +38,20 @@ export function WalletConnectButton() {
     );
   }
 
-  if (isConnected && address) {
+  if (isConnected && unshieldedAddress) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="gap-2">
             <Wallet className="h-4 w-4" />
-            {formatAddress(address)}
+            {formatAddress(unshieldedAddress)}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Wallet Connected</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="font-mono text-xs">
-            {address}
+            {unshieldedAddress}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={disconnect} className="text-red-600">

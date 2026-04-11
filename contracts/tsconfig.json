@@ -1,19 +1,27 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": ".",
-    "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "scripts/deployment-script",
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "lib": ["ES2022"]
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
-  "include": ["scripts/**/*"],
-  "exclude": ["node_modules", "dist", "managed"]
+  "include": [
+    "scripts/deployment-script/deploy.ts",
+    "scripts/deployment-script/utils.ts",
+    // "scripts/check-balance.ts",
+    // "scripts/deploy-preprod.ts",
+    // "scripts/test-proof-server.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "managed"
+  ]
 }

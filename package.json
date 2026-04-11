@@ -22,6 +22,8 @@
     "build:frontend": "cd frontend && npm run build",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "midnight:local": "bash ./start-local-midnight.sh",
+    "midnight:local:down": "docker compose -f ./midnight-local-compose.yml down",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
@@ -32,6 +34,7 @@
     "test:frontend": "cd frontend && npm run test"
   },
   "devDependencies": {
+    "@midnight-ntwrk/testkit-js": "^4.0.4",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   },

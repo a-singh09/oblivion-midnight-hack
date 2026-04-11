@@ -64,7 +64,7 @@ export default function ProofsPage() {
         blockNumber: p.blockNumber,
         transactionHash: p.transactionHash,
         zkProofVerified: p.zkProofVerified,
-        explorerLink: `https://explorer.midnight.network/tx/${p.transactionHash}`,
+        explorerLink: `https://explorer.preprod.midnight.network/tx/${p.transactionHash}`,
       })),
     };
 
@@ -230,7 +230,7 @@ export default function ProofsPage() {
                       Verify Proof
                     </button>
                     <a
-                      href={`https://explorer.midnight.network/tx/${proof.transactionHash}`}
+                      href={`https://explorer.preprod.midnight.network/tx/${proof.transactionHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"

@@ -1,24 +1,21 @@
-import * as path from "path";
-import * as fs from "fs";
-import { fileURLToPath } from "url";
-import {
-  setNetworkId,
-  getNetworkId,
-} from "@midnight-ntwrk/midnight-js-network-id";
-import { WalletFacade } from "@midnight-ntwrk/wallet-sdk-facade";
-import { DustWallet } from "@midnight-ntwrk/wallet-sdk-dust-wallet";
-import { HDWallet, Roles } from "@midnight-ntwrk/wallet-sdk-hd";
-import { ShieldedWallet } from "@midnight-ntwrk/wallet-sdk-shielded";
+import * as path from 'path';
+import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+import { setNetworkId, getNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
+import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import {
   createKeystore,
   InMemoryTransactionHistoryStorage,
   PublicKey,
   UnshieldedWallet,
-} from "@midnight-ntwrk/wallet-sdk-unshielded-wallet";
-import * as ledger from "@midnight-ntwrk/ledger-v8";
-import * as Rx from "rxjs";
-import { WebSocket } from "ws";
-import { Buffer } from "buffer";
+} from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+import * as ledger from '@midnight-ntwrk/ledger-v8';
+import * as Rx from 'rxjs';
+import { WebSocket } from 'ws';
+import { Buffer } from 'buffer';
 
 globalThis.WebSocket = WebSocket as any;
 
@@ -45,26 +42,26 @@ export class WalletProviderService {
   }
 
   private deriveKeys(seed: string) {
-    const hdWallet = HDWallet.fromSeed(Buffer.from(seed, "hex"));
-    if (hdWallet.type !== "seedOk") throw new Error("Invalid seed");
+    const hdWallet = HDWallet.fromSeed(Buffer.from(seed, 'hex'));
+    if (hdWallet.type !== 'seedOk') throw new Error('Invalid seed');
     const result = hdWallet.hdWallet
       .selectAccount(0)
       .selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust])
       .deriveKeysAt(0);
-    if (result.type !== "keysDerived") throw new Error("Key derivation failed");
+    if (result.type !== 'keysDerived') throw new Error('Key derivation failed');
     hdWallet.hdWallet.clear();
     return result.keys;
   }
 
   async initialize(): Promise<void> {
     try {
-      console.log("🔧 Initializing wallet provider...");
+      console.log('🔧 Initializing wallet provider...');
       console.log(`   Network: ${this.config.networkId}`);
       console.log(`   Indexer: ${this.config.indexerUrl}`);
       console.log(`   Proof Server: ${this.config.proofServerUrl}`);
 
       if (!this.config.walletSeed) {
-        throw new Error("MIDNIGHT_WALLET_SEED not configured");
+        throw new Error('MIDNIGHT_WALLET_SEED not configured');
       }
 
       setNetworkId(this.config.networkId);
@@ -73,12 +70,12 @@ export class WalletProviderService {
       const networkId = getNetworkId();
 
       this.shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(
-        keys[Roles.Zswap],
+        keys[Roles.Zswap]
       );
       this.dustSecretKey = ledger.DustSecretKey.fromSeed(keys[Roles.Dust]);
       this.unshieldedKeystore = createKeystore(
         keys[Roles.NightExternal],
-        networkId,
+        networkId
       );
 
       const walletConfig = {
@@ -89,20 +86,22 @@ export class WalletProviderService {
         },
         provingServerUrl: new URL(this.config.proofServerUrl),
         relayURL: new URL(
-          this.config.nodeUrl.replace(/^https?:\/\//, "wss://"),
+          this.config.nodeUrl.replace(/^https?:/, 'wss')
         ),
       };
 
       this.wallet = await WalletFacade.init({
         configuration: walletConfig,
         shielded: (config) =>
-          ShieldedWallet(config).startWithSecretKeys(this.shieldedSecretKeys),
+          ShieldedWallet(config).startWithSecretKeys(
+            this.shieldedSecretKeys
+          ),
         unshielded: (config) =>
           UnshieldedWallet({
             ...config,
             txHistoryStorage: new InMemoryTransactionHistoryStorage(),
           }).startWithPublicKey(
-            PublicKey.fromKeyStore(this.unshieldedKeystore),
+            PublicKey.fromKeyStore(this.unshieldedKeystore)
           ),
         dust: (config) =>
           DustWallet({
@@ -113,39 +112,38 @@ export class WalletProviderService {
             },
           }).startWithSecretKey(
             this.dustSecretKey,
-            ledger.LedgerParameters.initialParameters().dust,
+            ledger.LedgerParameters.initialParameters().dust
           ),
       });
 
       await this.wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
 
-      const state = (await Rx.firstValueFrom(
+      const state = await Rx.firstValueFrom(
         this.wallet.state().pipe(
           Rx.timeout(60000),
           Rx.filter((s: any) => s.isSynced),
-          Rx.take(1),
-        ),
-      )) as any;
+          Rx.take(1)
+        )
+      ) as any;
 
       const address = this.unshieldedKeystore.getBech32Address();
       const balance =
         state.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
 
-      console.log("✅ Wallet initialized successfully");
+      console.log('✅ Wallet initialized successfully');
       console.log(`   Address: ${address}`);
       console.log(`   Balance: ${balance.toLocaleString()} tNight`);
 
       if (balance === 0n) {
-        const faucetUrl =
-          this.config.networkId.toLowerCase() === "preprod"
-            ? "https://faucet.preprod.midnight.network/"
-            : "(local network faucet not configured)";
-        console.warn(`⚠️  Wallet has zero balance! Fund it: ${faucetUrl}`);
+        console.warn(
+          '⚠️  Wallet has zero balance! Fund it: https://faucet.preprod.midnight.network/'
+        );
       }
 
       // Create wallet provider interface for contract interactions
       this.walletProvider = {
-        getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
+        getCoinPublicKey: () =>
+          state.shielded.coinPublicKey.toHexString(),
         getEncryptionPublicKey: () =>
           state.shielded.encryptionPublicKey.toHexString(),
         async balanceTx(tx: any, ttl?: Date) {
@@ -155,7 +153,7 @@ export class WalletProviderService {
               shieldedSecretKeys: this.shieldedSecretKeys,
               dustSecretKey: this.dustSecretKey,
             },
-            { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+            { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) }
           );
           const signFn = (payload: Uint8Array) =>
             this.unshieldedKeystore!.signData(payload);
@@ -178,7 +176,7 @@ export class WalletProviderService {
 
       this.initialized = true;
     } catch (error) {
-      console.error("❌ Failed to initialize wallet provider:", error);
+      console.error('❌ Failed to initialize wallet provider:', error);
       throw error;
     }
   }
@@ -186,7 +184,7 @@ export class WalletProviderService {
   getProvider() {
     if (!this.initialized || !this.walletProvider) {
       throw new Error(
-        "Wallet provider not initialized. Call initialize() first.",
+        'Wallet provider not initialized. Call initialize() first.'
       );
     }
     return this.walletProvider;
@@ -200,10 +198,9 @@ export class WalletProviderService {
     if (!this.wallet) {
       return 0n;
     }
-    const state = (await Rx.firstValueFrom(
-      this.wallet.state().pipe(Rx.take(1)),
-    )) as any;
-    return state.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
+    const state = await Rx.firstValueFrom(
+      this.wallet.state().pipe(Rx.take(1))
+    ) as any;
   }
 
   async close(): Promise<void> {
@@ -212,3 +209,4 @@ export class WalletProviderService {
     }
   }
 }
+

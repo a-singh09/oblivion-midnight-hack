@@ -3,6 +3,7 @@
  * Handles interactions with deployed Midnight smart contracts
  */
 
+import type { WalletConnectedAPI } from "@midnight-ntwrk/dapp-connector-api";
 import deploymentConfig from "../../contracts/deployment.json";
 
 export interface CommitmentParams {
@@ -22,12 +23,12 @@ export interface TransactionResult {
 }
 
 export class MidnightContractService {
-  private wallet: Window["midnight"];
+  private wallet: WalletConnectedAPI;
   private dataCommitmentAddress: string;
   private zkDeletionVerifierAddress: string;
   private proofServerUrl: string;
 
-  constructor(wallet: Window["midnight"]) {
+  constructor(wallet: WalletConnectedAPI) {
     this.wallet = wallet;
     this.dataCommitmentAddress =
       deploymentConfig.contracts.DataCommitment.address;
@@ -143,8 +144,6 @@ export class MidnightContractService {
   ): Promise<TransactionResult> {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        const state = await this.wallet.state();
-
         // Check if transaction is confirmed
         // Note: Actual implementation would query the indexer
         const isConfirmed = await this.checkTransactionConfirmation(txHash);

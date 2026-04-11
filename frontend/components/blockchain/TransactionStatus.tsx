@@ -52,7 +52,7 @@ export function TransactionStatus({
     };
   }, [txHash, onComplete]);
 
-  const explorerUrl = `https://explorer.testnet.midnight.network/tx/${txHash}`;
+  const explorerUrl = `https://explorer.preprod.midnight.network/tx/${txHash}`;
 
   const getStatusIcon = () => {
     switch (status) {

@@ -13,9 +13,9 @@
     }
   },
   "endpoints": {
-    "indexer": "https://indexer.testnet-02.midnight.network/api/v1/graphql",
-    "indexerWS": "wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws",
-    "node": "https://rpc.testnet-02.midnight.network",
+    "indexer": "https://indexer.preprod.midnight.network/api/v4/graphql",
+    "indexerWS": "wss://indexer.preprod.midnight.network/api/v4/graphql/ws",
+    "node": "https://rpc.preprod.midnight.network",
     "proofServer": "http://127.0.0.1:6300"
   }
 }

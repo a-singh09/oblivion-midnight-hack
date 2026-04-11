@@ -58,7 +58,7 @@ export function ProofExportDialog({ proof, onClose }: ProofExportDialogProps) {
       transactionHash: proof.transactionHash,
       zkProofVerified: proof.zkProofVerified,
       verificationUrl: `https://verify.oblivion.network/proof/${proof.deletionProofHash}`,
-      explorerUrl: `https://explorer.midnight.network/tx/${proof.transactionHash}`,
+      explorerUrl: `https://explorer.preprod.midnight.network/tx/${proof.transactionHash}`,
     };
 
     let content: string;

@@ -6,11 +6,11 @@ services:
     image: postgres:15-alpine
     container_name: oblivion-postgres
     environment:
-      POSTGRES_DB: oblivion_db
-      POSTGRES_USER: oblivion
+      POSTGRES_DB: oblivion_protocol
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -45,7 +45,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://oblivion:password@postgres:5432/oblivion_db
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/oblivion_protocol
       - PROOF_SERVER_URL=http://proof-server:6300
     volumes:
       - ./backend:/app

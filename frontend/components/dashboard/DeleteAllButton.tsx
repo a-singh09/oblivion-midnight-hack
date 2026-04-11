@@ -240,7 +240,7 @@ export function DeleteAllButton() {
                     .map((proof, idx) => (
                       <a
                         key={idx}
-                        href={`https://explorer.midnight.network/proof/${proof}`}
+                        href={`https://explorer.preprod.midnight.network/proof/${proof}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border border-border hover:border-primary transition-colors"
